@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:six_pos/util/images.dart';
+import 'package:grow_up/util/images.dart';
 
 class CustomImage extends StatelessWidget {
   final String image;
@@ -21,14 +21,16 @@ class CustomImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return FadeInImage.assetNetwork(
       placeholder: placeholder != null ? placeholder : Images.placeholder,
-      height: height, width: width, fit: fit,
+      height: height,
+      width: width,
+      fit: fit,
       image: image,
       imageErrorBuilder: (c, o, s) => Image.asset(
         placeholder != null ? placeholder : Images.placeholder,
-        height: height, width: width, fit: fit,
-
+        height: height,
+        width: width,
+        fit: fit,
       ),
     );
   }
 }
-

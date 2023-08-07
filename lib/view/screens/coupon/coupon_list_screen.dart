@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/controller/coupon_controller.dart';
-import 'package:six_pos/util/color_resources.dart';
-import 'package:six_pos/util/dimensions.dart';
-import 'package:six_pos/util/images.dart';
-import 'package:six_pos/view/base/custom_app_bar.dart';
-import 'package:six_pos/view/base/custom_drawer.dart';
-import 'package:six_pos/view/base/custom_header.dart';
-import 'package:six_pos/view/screens/coupon/add_coupon_screen.dart';
-import 'package:six_pos/view/screens/coupon/widget/coupon_list_view.dart';
-
-
-
+import 'package:grow_up/controller/coupon_controller.dart';
+import 'package:grow_up/util/color_resources.dart';
+import 'package:grow_up/util/dimensions.dart';
+import 'package:grow_up/util/images.dart';
+import 'package:grow_up/view/base/custom_app_bar.dart';
+import 'package:grow_up/view/base/custom_drawer.dart';
+import 'package:grow_up/view/base/custom_header.dart';
+import 'package:grow_up/view/screens/coupon/add_coupon_screen.dart';
+import 'package:grow_up/view/screens/coupon/widget/coupon_list_view.dart';
 
 class CouponListScreen extends StatefulWidget {
   @override
@@ -22,7 +19,7 @@ class _CouponListScreenState extends State<CouponListScreen> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   @override
-  initState(){
+  initState() {
     super.initState();
     Get.find<CouponController>().getCouponListData(1);
   }
@@ -45,8 +42,10 @@ class _CouponListScreenState extends State<CouponListScreen> {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    CustomHeader(title: 'coupon_list'.tr, headerImage: Images.categories),
-                    SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT    ),
+                    CustomHeader(
+                        title: 'coupon_list'.tr,
+                        headerImage: Images.categories),
+                    SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT),
                     CouponListView(scrollController: _scrollController),
                   ],
                 ),
@@ -55,9 +54,6 @@ class _CouponListScreenState extends State<CouponListScreen> {
           ),
         ),
       ),
-
-
-
       floatingActionButton: FloatingActionButton(
         elevation: 0,
         backgroundColor: ColorResources.whiteColor,

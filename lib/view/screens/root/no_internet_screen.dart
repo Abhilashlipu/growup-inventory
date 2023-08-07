@@ -1,8 +1,8 @@
 import 'package:connectivity/connectivity.dart';
-import 'package:six_pos/util/dimensions.dart';
-import 'package:six_pos/util/images.dart';
-import 'package:six_pos/util/styles.dart';
-import 'package:six_pos/view/base/custom_button.dart';
+import 'package:grow_up/util/dimensions.dart';
+import 'package:grow_up/util/images.dart';
+import 'package:grow_up/util/styles.dart';
+import 'package:grow_up/view/base/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,16 +13,17 @@ class NoInternetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.025),
+      padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.025),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(Images.no_internet, width: 150, height: 150),
-            Text('oops'.tr, style: fontSizeBold.copyWith(
-              fontSize: 30,
-              color: Theme.of(context).textTheme.bodyText1.color,
-            )),
+            Text('oops'.tr,
+                style: fontSizeBold.copyWith(
+                  fontSize: 30,
+                  color: Theme.of(context).textTheme.bodyText1.color,
+                )),
             SizedBox(height: Dimensions.PADDING_SIZE_EXTRA_SMALL),
             Text(
               'no_internet_connection'.tr,
@@ -35,14 +36,15 @@ class NoInternetScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 40),
               child: CustomButton(
                 onPressed: () async {
-                  if(await Connectivity().checkConnectivity() != ConnectivityResult.none) {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => child));
+                  if (await Connectivity().checkConnectivity() !=
+                      ConnectivityResult.none) {
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (_) => child));
                   }
                 },
                 buttonText: 'retry'.tr,
               ),
             ),
-
           ],
         ),
       ),

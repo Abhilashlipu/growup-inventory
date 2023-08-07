@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:six_pos/controller/auth_controller.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/product_model.dart';
-import 'package:six_pos/data/model/response/supplier_model.dart';
-import 'package:six_pos/data/model/response/supplier_profile_model.dart' as profile;
-import 'package:six_pos/data/model/response/transaction_model.dart';
-import 'package:six_pos/data/repository/supplier_repo.dart';
-import 'package:six_pos/view/base/custom_snackbar.dart';
+import 'package:grow_up/controller/auth_controller.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/product_model.dart';
+import 'package:grow_up/data/model/response/supplier_model.dart';
+import 'package:grow_up/data/model/response/supplier_profile_model.dart'
+    as profile;
+import 'package:grow_up/data/model/response/transaction_model.dart';
+import 'package:grow_up/data/repository/supplier_repo.dart';
+import 'package:grow_up/view/base/custom_snackbar.dart';
 import 'package:http/http.dart' as http;
-import 'package:six_pos/data/model/response/response_model.dart';
+import 'package:grow_up/data/model/response/response_model.dart';
 
-
-class SupplierController extends GetxController implements GetxService{
+class SupplierController extends GetxController implements GetxService {
   final SupplierRepo supplierRepo;
   SupplierController({@required this.supplierRepo});
 
@@ -29,55 +29,58 @@ class SupplierController extends GetxController implements GetxService{
   int _supplierListLength;
   int get supplierListLength => _supplierListLength;
   List<Suppliers> _supplierList = [];
-  List<Suppliers> get supplierList =>_supplierList;
+  List<Suppliers> get supplierList => _supplierList;
   int _supplierIndex = 0;
   int get supplierIndex => _supplierIndex;
   List<int> _supplierIds = [];
   List<int> get supplierIds => _supplierIds;
 
   profile.Supplier _supplierProfile;
-  profile.Supplier get supplierProfile =>_supplierProfile;
+  profile.Supplier get supplierProfile => _supplierProfile;
 
   List<Products> _supplierProductList = [];
-  List<Products> get supplierProductList =>_supplierProductList;
+  List<Products> get supplierProductList => _supplierProductList;
 
   int _supplierProductListLength;
   int get supplierProductListLength => _supplierProductListLength;
 
   List<Transfers> _supplierTransactionList = [];
-  List<Transfers> get supplierTransactionList =>_supplierTransactionList;
+  List<Transfers> get supplierTransactionList => _supplierTransactionList;
 
   int _supplierTransactionListLength;
   int get supplierTransactionListLength => _supplierTransactionListLength;
 
-
-
-
   final picker = ImagePicker();
   XFile _supplierImage;
-  XFile get supplierImage=> _supplierImage;
+  XFile get supplierImage => _supplierImage;
   void pickImage(bool isRemove) async {
-    if(isRemove) {
+    if (isRemove) {
       _supplierImage = null;
-    }else {
-      _supplierImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    } else {
+      _supplierImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
     }
     update();
   }
 
-  Future<http.StreamedResponse> addSupplier(Suppliers supplier, bool isUpdate) async {
-
+  Future<http.StreamedResponse> addSupplier(
+      Suppliers supplier, bool isUpdate) async {
     _isLoading = true;
     update();
-    http.StreamedResponse response = await supplierRepo.addSupplier(supplier, _supplierImage, Get.find<AuthController>().getUserToken(), isUpdate: isUpdate);
-    if(response.statusCode == 200) {
+    http.StreamedResponse response = await supplierRepo.addSupplier(
+        supplier, _supplierImage, Get.find<AuthController>().getUserToken(),
+        isUpdate: isUpdate);
+    if (response.statusCode == 200) {
       _supplierImage = null;
       getSupplierList(1, reload: true);
       _isLoading = false;
       Get.back();
-      showCustomSnackBar(isUpdate? 'supplier_updated_successfully'.tr : 'supplier_added_successfully'.tr, isError: false);
-
-    }else {
+      showCustomSnackBar(
+          isUpdate
+              ? 'supplier_updated_successfully'.tr
+              : 'supplier_added_successfully'.tr,
+          isError: false);
+    } else {
       _isLoading = false;
       showCustomSnackBar('supplier_update_failed'.tr);
     }
@@ -86,36 +89,35 @@ class SupplierController extends GetxController implements GetxService{
     return response;
   }
 
-  Future<void> getSupplierList( int offset, {Products product, bool reload = false}) async {
-    if(reload){
-      _supplierList =[];
+  Future<void> getSupplierList(int offset,
+      {Products product, bool reload = false}) async {
+    if (reload) {
+      _supplierList = [];
     }
     _isGetting = true;
     _supplierIndex = 0;
-    _supplierIds =[];
+    _supplierIds = [];
     _supplierIds.add(0);
     Response response = await supplierRepo.getSupplierList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _supplierList.addAll(SupplierModel.fromJson(response.body).suppliers);
       _supplierListLength = SupplierModel.fromJson(response.body).total;
       _supplierIndex = 0;
-      for(int index = 0; index < _supplierList.length; index++) {
+      for (int index = 0; index < _supplierList.length; index++) {
         _supplierIds.add(_supplierList[index].id);
       }
 
-      if(product != null){
+      if (product != null) {
         setSupplierIndex(product.supplier.id, true);
       }
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
-
-
 
   Future<void> searchSupplier(String name) async {
     _supplierList = [];
@@ -124,129 +126,138 @@ class SupplierController extends GetxController implements GetxService{
     _supplierIds = [];
     _supplierIds.add(0);
     Response response = await supplierRepo.searchSupplier(name);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _supplierList = [];
       supplierList.addAll(SupplierModel.fromJson(response.body).suppliers);
       _supplierListLength = SupplierModel.fromJson(response.body).total;
       _supplierIndex = 0;
-      for(int index = 0; index < _supplierList.length; index++) {
+      for (int index = 0; index < _supplierList.length; index++) {
         _supplierIds.add(_supplierList[index].id);
       }
 
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
-
 
   Future<void> deleteSupplier(int supplierId) async {
     _isGetting = true;
 
     Response response = await supplierRepo.deleteSupplier(supplierId);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       getSupplierList(1);
       _isGetting = false;
       Get.back();
       showCustomSnackBar('supplier_deleted_successfully'.tr, isError: false);
-
-
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
-
-
 
   Future<void> getSupplierProfile(int supplierId) async {
     print('due amount ===>');
     Response response = await supplierRepo.getSupplierProfile(supplierId);
-    if(response.statusCode == 200) {
-      _supplierProfile = profile.SupplierProfileModel.fromJson(response.body).supplier;
+    if (response.statusCode == 200) {
+      _supplierProfile =
+          profile.SupplierProfileModel.fromJson(response.body).supplier;
       print('due amount ===>${_supplierProfile.dueAmount}');
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-
-  Future<void> getSupplierProductList(int offset, int supplierId, {bool reload = false}) async {
-
-    if(reload){
+  Future<void> getSupplierProductList(int offset, int supplierId,
+      {bool reload = false}) async {
+    if (reload) {
       _supplierProductList = [];
     }
 
     _isGetting = true;
-    Response response = await supplierRepo.getSupplierProductList(offset, supplierId);
-    if(response.statusCode == 200) {
-      _supplierProductList.addAll(ProductModel.fromJson(response.body).products);
+    Response response =
+        await supplierRepo.getSupplierProductList(offset, supplierId);
+    if (response.statusCode == 200) {
+      _supplierProductList
+          .addAll(ProductModel.fromJson(response.body).products);
       _supplierProductListLength = ProductModel.fromJson(response.body).total;
 
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-
-  Future<void> getSupplierTransactionList(int offset, int supplierId, {bool reload = false}) async {
-    if(reload){
-      _supplierTransactionList =[];
+  Future<void> getSupplierTransactionList(int offset, int supplierId,
+      {bool reload = false}) async {
+    if (reload) {
+      _supplierTransactionList = [];
     }
     _isGetting = true;
-    Response response = await supplierRepo.getSupplierTransactionList(offset, supplierId);
-    if(response.statusCode == 200) {
-      _supplierTransactionList.addAll(TransactionModel.fromJson(response.body).transfers);
-      _supplierTransactionListLength = TransactionModel.fromJson(response.body).total;
+    Response response =
+        await supplierRepo.getSupplierTransactionList(offset, supplierId);
+    if (response.statusCode == 200) {
+      _supplierTransactionList
+          .addAll(TransactionModel.fromJson(response.body).transfers);
+      _supplierTransactionListLength =
+          TransactionModel.fromJson(response.body).total;
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
-  Future<void> getSupplierTransactionFilterList(int offset, int supplierId, String fromDate, String toDate) async {
-    _supplierTransactionList =[];
+
+  Future<void> getSupplierTransactionFilterList(
+      int offset, int supplierId, String fromDate, String toDate) async {
+    _supplierTransactionList = [];
     _isGetting = true;
-    Response response = await supplierRepo.getSupplierTransactionFilterList(offset, supplierId, fromDate, toDate);
-    if(response.statusCode == 200) {
-      _supplierTransactionList =[];
-      _supplierTransactionList.addAll(TransactionModel.fromJson(response.body).transfers);
-      _supplierTransactionListLength = TransactionModel.fromJson(response.body).total;
+    Response response = await supplierRepo.getSupplierTransactionFilterList(
+        offset, supplierId, fromDate, toDate);
+    if (response.statusCode == 200) {
+      _supplierTransactionList = [];
+      _supplierTransactionList
+          .addAll(TransactionModel.fromJson(response.body).transfers);
+      _supplierTransactionListLength =
+          TransactionModel.fromJson(response.body).total;
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-
-  Future<ResponseModel> supplierNewPurchase(int supplierId, double purchaseAmount, double paidAmount, double dueAmount, int paymentAccountId) async {
-
+  Future<ResponseModel> supplierNewPurchase(
+      int supplierId,
+      double purchaseAmount,
+      double paidAmount,
+      double dueAmount,
+      int paymentAccountId) async {
     _isLoading = true;
     update();
-    Response response = await supplierRepo.supplierNewPurchase(supplierId, purchaseAmount,paidAmount,dueAmount,paymentAccountId);
+    Response response = await supplierRepo.supplierNewPurchase(
+        supplierId, purchaseAmount, paidAmount, dueAmount, paymentAccountId);
     ResponseModel responseModel;
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       getSupplierProfile(supplierId);
-      getSupplierTransactionList(1,supplierId, reload: true);
+      getSupplierTransactionList(1, supplierId, reload: true);
       Get.back();
-      showCustomSnackBar('purchase_completed_successfully'.tr , isError: false);
+      showCustomSnackBar('purchase_completed_successfully'.tr, isError: false);
       _isLoading = false;
-    }else{
+    } else {
       _isLoading = false;
       responseModel = ResponseModel(false, response.statusText);
     }
@@ -254,22 +265,21 @@ class SupplierController extends GetxController implements GetxService{
     return responseModel;
   }
 
-
-
-  Future<ResponseModel> supplierPayment(int supplierId, double totalDueAmount, double payAmount, double remainingDueAmount, int paymentAccountId) async {
-
+  Future<ResponseModel> supplierPayment(int supplierId, double totalDueAmount,
+      double payAmount, double remainingDueAmount, int paymentAccountId) async {
     _isLoading = true;
     update();
-    Response response = await supplierRepo.supplierPayment(supplierId, totalDueAmount, payAmount, remainingDueAmount, paymentAccountId);
+    Response response = await supplierRepo.supplierPayment(supplierId,
+        totalDueAmount, payAmount, remainingDueAmount, paymentAccountId);
     ResponseModel responseModel;
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       getSupplierProfile(supplierId);
-      getSupplierTransactionList(1,supplierId);
+      getSupplierTransactionList(1, supplierId);
 
       Get.back();
-      showCustomSnackBar('payment_completed_successfully'.tr , isError: false);
+      showCustomSnackBar('payment_completed_successfully'.tr, isError: false);
       _isLoading = false;
-    }else{
+    } else {
       _isLoading = false;
       responseModel = ResponseModel(false, response.statusText);
     }
@@ -277,10 +287,7 @@ class SupplierController extends GetxController implements GetxService{
     return responseModel;
   }
 
-
-
-
-  void removeImage(){
+  void removeImage() {
     _supplierImage = null;
     update();
   }
@@ -294,9 +301,10 @@ class SupplierController extends GetxController implements GetxService{
     _isFirst = true;
     update();
   }
+
   void setSupplierIndex(int index, bool notify) {
     _supplierIndex = index;
-    if(notify) {
+    if (notify) {
       update();
     }
   }
@@ -308,19 +316,19 @@ class SupplierController extends GetxController implements GetxService{
   DateTime get endDate => _endDate;
   DateFormat get dateFormat => _dateFormat;
 
-  void selectDate(String type, BuildContext context){
+  void selectDate(String type, BuildContext context) {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2022),
       lastDate: DateTime(2030),
     ).then((date) {
-      if (type == 'start'){
+      if (type == 'start') {
         _startDate = date;
-      }else{
+      } else {
         _endDate = date;
       }
-      if(date == null){
+      if (date == null) {
         print('Null');
       }
       update();

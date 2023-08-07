@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/coupon_model.dart';
-import 'package:six_pos/data/repository/coupon_repo.dart';
-import 'package:six_pos/data/model/response/response_model.dart';
-import 'package:six_pos/view/base/custom_snackbar.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/coupon_model.dart';
+import 'package:grow_up/data/repository/coupon_repo.dart';
+import 'package:grow_up/data/model/response/response_model.dart';
+import 'package:grow_up/view/base/custom_snackbar.dart';
 
-class CouponController extends GetxController implements GetxService{
+class CouponController extends GetxController implements GetxService {
   final CouponRepo couponRepo;
   CouponController({@required this.couponRepo});
 
@@ -21,58 +21,54 @@ class CouponController extends GetxController implements GetxService{
   bool _isFirst = true;
   bool get isFirst => _isFirst;
 
-
   bool _isAdded = false;
   bool get isAdded => _isAdded;
 
-  Future<void> getCouponListData( int offset, {bool reload = false}) async {
-    if(reload){
+  Future<void> getCouponListData(int offset, {bool reload = false}) async {
+    if (reload) {
       _couponList = [];
     }
     _isLoading = true;
     Response response = await couponRepo.getCouponList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _couponList.addAll(CouponModel.fromJson(response.body).coupons);
       _couponListLength = CouponModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-
-  Future<void> deleteCoupon( int couponId) async {
+  Future<void> deleteCoupon(int couponId) async {
     _isLoading = true;
     Response response = await couponRepo.deleteCoupon(couponId);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _isLoading = false;
       getCouponListData(1, reload: true);
       Get.back();
       showCustomSnackBar('coupon_deleted_successfully'.tr, isError: false);
-
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
-
 
   Future<void> toggleCouponStatus(int couponId, int status, int index) async {
     Response response = await couponRepo.toggleCouponStatus(couponId, status);
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       _couponList[index].status = status;
-      showCustomSnackBar('coupon_status_updated_successfully'.tr, isError: false);
-    }else{
+      showCustomSnackBar('coupon_status_updated_successfully'.tr,
+          isError: false);
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-
   int _dropDownPosition = 0;
-  List<String> _dropDownValues =[];
+  List<String> _dropDownValues = [];
 
   int get dropDownPosition => _dropDownPosition;
   List<String> get dropDownValues => _dropDownValues;
@@ -82,15 +78,19 @@ class CouponController extends GetxController implements GetxService{
     update();
     Response response = await couponRepo.addNewCoupon(coupon, update: isUpdate);
     ResponseModel responseModel;
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       getCouponListData(1, reload: true);
       Get.back();
-      showCustomSnackBar(isUpdate? 'coupon_updated_successfully'.tr : 'coupon_added_successfully'.tr, isError: false);
+      showCustomSnackBar(
+          isUpdate
+              ? 'coupon_updated_successfully'.tr
+              : 'coupon_added_successfully'.tr,
+          isError: false);
       _isAdded = false;
-    }else if(response.statusCode == 403){
+    } else if (response.statusCode == 403) {
       _isAdded = false;
       showCustomSnackBar('coupon_already_exist'.tr);
-    }else{
+    } else {
       _isAdded = false;
       responseModel = ResponseModel(false, response.statusText);
     }
@@ -98,13 +98,13 @@ class CouponController extends GetxController implements GetxService{
     return responseModel;
   }
 
-  void setDropDownPosition(int index){
+  void setDropDownPosition(int index) {
     _dropDownPosition = index;
     update();
   }
 
-  void getDropDownValues(){
-    List<String> dropDownValues= [
+  void getDropDownValues() {
+    List<String> dropDownValues = [
       'Default',
       'Flash Deal',
     ];
@@ -112,13 +112,12 @@ class CouponController extends GetxController implements GetxService{
     update();
   }
 
-  void setDate( String type, DateTime dateTime){
-    if(type == 'start'){
+  void setDate(String type, DateTime dateTime) {
+    if (type == 'start') {
       _startDate = dateTime;
-    }else{
+    } else {
       _endDate = dateTime;
     }
-
   }
 
   int _discountTypeIndex = 0;
@@ -126,7 +125,7 @@ class CouponController extends GetxController implements GetxService{
 
   void setDiscountTypeIndex(int index, bool notify) {
     _discountTypeIndex = index;
-    if(notify) {
+    if (notify) {
       update();
     }
   }
@@ -138,25 +137,24 @@ class CouponController extends GetxController implements GetxService{
   DateTime get endDate => _endDate;
   DateFormat get dateFormat => _dateFormat;
 
-  void selectDate(String type, BuildContext context){
+  void selectDate(String type, BuildContext context) {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2022),
       lastDate: DateTime(2030),
     ).then((date) {
-      if (type == 'start'){
+      if (type == 'start') {
         _startDate = date;
-      }else{
+      } else {
         _endDate = date;
       }
-      if(date == null){
+      if (date == null) {
         print('Null');
       }
       update();
     });
   }
-
 
   void showBottomLoader() {
     _isLoading = true;
@@ -167,5 +165,4 @@ class CouponController extends GetxController implements GetxService{
     _isFirst = true;
     update();
   }
-
 }

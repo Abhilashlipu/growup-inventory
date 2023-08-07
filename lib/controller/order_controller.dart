@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/invoice_model.dart';
-import 'package:six_pos/data/model/response/order_model.dart';
-import 'package:six_pos/data/repository/order_repo.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/invoice_model.dart';
+import 'package:grow_up/data/model/response/order_model.dart';
+import 'package:grow_up/data/repository/order_repo.dart';
 
-class OrderController extends GetxController implements GetxService{
+class OrderController extends GetxController implements GetxService {
   final OrderRepo orderRepo;
   OrderController({@required this.orderRepo});
 
-  List<Orders> _orderList =[];
+  List<Orders> _orderList = [];
   bool _isLoading = false;
   List<Orders> get orderList => _orderList;
   bool get isLoading => _isLoading;
@@ -26,19 +26,18 @@ class OrderController extends GetxController implements GetxService{
   double _totalTaxAmount = 0;
   double get totalTaxAmount => _totalTaxAmount;
 
-
   Future<void> getOrderList(String offset, {bool reload = false}) async {
-    if(reload){
+    if (reload) {
       _orderList = [];
     }
     _isLoading = true;
     Response response = await orderRepo.getOrderList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _orderList.addAll(OrderModel.fromJson(response.body).orders);
       _orderListLength = OrderModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
@@ -47,16 +46,16 @@ class OrderController extends GetxController implements GetxService{
   Future<void> getInvoiceData(int orderId) async {
     _isLoading = true;
     Response response = await orderRepo.getInvoiceData(orderId);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _discountOnProduct = 0;
       _totalTaxAmount = 0;
-     _invoice = InvoiceModel.fromJson(response.body).invoice;
-     for(int i=0; i< _invoice.details.length; i++ ){
-       _discountOnProduct += invoice.details[i].discountOnProduct;
-       _totalTaxAmount += invoice.details[i].taxAmount;
-     }
-     _isLoading = false;
-    }else {
+      _invoice = InvoiceModel.fromJson(response.body).invoice;
+      for (int i = 0; i < _invoice.details.length; i++) {
+        _discountOnProduct += invoice.details[i].discountOnProduct;
+        _totalTaxAmount += invoice.details[i].taxAmount;
+      }
+      _isLoading = false;
+    } else {
       _isLoading = false;
       ApiChecker.checkApi(response);
     }
@@ -72,5 +71,4 @@ class OrderController extends GetxController implements GetxService{
     _isFirst = true;
     update();
   }
-
 }

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:six_pos/data/api/api_client.dart';
-import 'package:six_pos/util/app_constants.dart';
+import 'package:grow_up/data/api/api_client.dart';
+import 'package:grow_up/util/app_constants.dart';
 
 class AuthRepo {
   final ApiClient apiClient;
@@ -12,13 +12,13 @@ class AuthRepo {
   AuthRepo({@required this.apiClient, @required this.sharedPreferences});
 
   Future<Response> login(String email, String password) async {
-    return await apiClient.postData(AppConstants.LOGIN_URI, {"email": email, "password": password});
+    return await apiClient.postData(
+        AppConstants.LOGIN_URI, {"email": email, "password": password});
   }
 
   Future<Response> getProfileInfo() async {
     return await apiClient.getData(AppConstants.PROFILE_URI + getUserToken());
   }
-
 
   Future<bool> saveUserToken(String token) async {
     apiClient.token = token;
@@ -59,9 +59,6 @@ class AuthRepo {
   String getUserCountryCode() {
     return sharedPreferences.getString(AppConstants.USER_COUNTRY_CODE) ?? "";
   }
-
-
-
 
   Future<bool> clearUserEmailAndPassword() async {
     await sharedPreferences.remove(AppConstants.USER_PASSWORD);

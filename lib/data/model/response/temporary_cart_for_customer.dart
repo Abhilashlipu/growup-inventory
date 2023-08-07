@@ -1,5 +1,4 @@
-
-import 'package:six_pos/data/model/response/cart_model.dart';
+import 'package:grow_up/data/model/response/cart_model.dart';
 
 class TemporaryCartListModel {
   List<CartModel> _cart;
@@ -10,17 +9,15 @@ class TemporaryCartListModel {
   double _couponAmount;
   double _extraDiscount;
 
-
-
-  TemporaryCartListModel(
-      {List<CartModel> cart,
-        int userId,
-        String customerName,
-        int userIndex,
-        double customerBalance,
-        double couponAmount,
-        double extraDiscount,
-      }) {
+  TemporaryCartListModel({
+    List<CartModel> cart,
+    int userId,
+    String customerName,
+    int userIndex,
+    double customerBalance,
+    double couponAmount,
+    double extraDiscount,
+  }) {
     this._cart = cart;
     this._userId = userId;
     this._customerName = customerName;
@@ -28,7 +25,6 @@ class TemporaryCartListModel {
     this._customerBalance = customerBalance;
     this._couponAmount = couponAmount;
     this._extraDiscount = extraDiscount;
-
   }
 
   List<CartModel> get cart => _cart;
@@ -41,11 +37,9 @@ class TemporaryCartListModel {
   // ignore: unnecessary_getters_setters
   double get extraDiscount => _extraDiscount;
 
-
   set couponAmount(double value) {
     _couponAmount = value;
   }
-
 
   set extraDiscount(double value) {
     _extraDiscount = value;
@@ -62,7 +56,6 @@ class TemporaryCartListModel {
     _userIndex = json['user_index'];
     _customerName = json['customer_name'];
     _customerBalance = json['customer_balance'];
-
   }
 
   Map<String, dynamic> toJson() {
@@ -75,11 +68,8 @@ class TemporaryCartListModel {
     data['customer_name'] = this._customerName;
     data['customer_balance'] = this._customerName;
 
-
     return data;
   }
-
-
 }
 
 class Cart {
@@ -89,20 +79,18 @@ class Cart {
   int _quantity;
   double _taxAmount;
 
-
   Cart(
-      String productId,
-      String price,
-      double discountAmount,
-      int quantity,
-      double taxAmount,
-      ) {
+    String productId,
+    String price,
+    double discountAmount,
+    int quantity,
+    double taxAmount,
+  ) {
     this._productId = productId;
     this._price = price;
     this._discountAmount = discountAmount;
     this._quantity = quantity;
     this._taxAmount = taxAmount;
-
   }
 
   String get productId => _productId;
@@ -111,14 +99,12 @@ class Cart {
   int get quantity => _quantity;
   double get taxAmount => _taxAmount;
 
-
   Cart.fromJson(Map<String, dynamic> json) {
     _productId = json['id'];
     _price = json['price'];
     _discountAmount = json['discount'];
     _quantity = json['quantity'];
     _taxAmount = json['tax'];
-
   }
 
   Map<String, dynamic> toJson() {
@@ -131,6 +117,3 @@ class Cart {
     return data;
   }
 }
-
-
-

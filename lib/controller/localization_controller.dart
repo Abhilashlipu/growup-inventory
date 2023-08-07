@@ -1,5 +1,5 @@
-import 'package:six_pos/data/model/response/language_model.dart';
-import 'package:six_pos/util/app_constants.dart';
+import 'package:grow_up/data/model/response/language_model.dart';
+import 'package:grow_up/util/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,9 +11,8 @@ class LocalizationController extends GetxController {
     loadCurrentLanguage();
   }
 
-
-
-  Locale _locale = Locale(AppConstants.languages[0].languageCode, AppConstants.languages[0].countryCode);
+  Locale _locale = Locale(AppConstants.languages[0].languageCode,
+      AppConstants.languages[0].countryCode);
   bool _isLtr = true;
   List<LanguageModel> _languages = [];
 
@@ -24,9 +23,9 @@ class LocalizationController extends GetxController {
   void setLanguage(Locale locale) {
     Get.updateLocale(locale);
     _locale = locale;
-    if(_locale.languageCode == 'ar') {
+    if (_locale.languageCode == 'ar') {
       _isLtr = false;
-    }else {
+    } else {
       _isLtr = true;
     }
     saveLanguage(_locale);
@@ -34,12 +33,15 @@ class LocalizationController extends GetxController {
   }
 
   void loadCurrentLanguage() async {
-    _locale = Locale(sharedPreferences.getString(AppConstants.LANGUAGE_CODE) ?? AppConstants.languages[0].languageCode,
-        sharedPreferences.getString(AppConstants.COUNTRY_CODE) ?? AppConstants.languages[0].countryCode);
+    _locale = Locale(
+        sharedPreferences.getString(AppConstants.LANGUAGE_CODE) ??
+            AppConstants.languages[0].languageCode,
+        sharedPreferences.getString(AppConstants.COUNTRY_CODE) ??
+            AppConstants.languages[0].countryCode);
     _isLtr = _locale.languageCode != 'ar';
 
-    for(int index = 0; index<AppConstants.languages.length; index++) {
-      if(AppConstants.languages[index].languageCode == _locale.languageCode) {
+    for (int index = 0; index < AppConstants.languages.length; index++) {
+      if (AppConstants.languages[index].languageCode == _locale.languageCode) {
         _selectedIndex = index;
         break;
       }
@@ -51,7 +53,8 @@ class LocalizationController extends GetxController {
   }
 
   void saveLanguage(Locale locale) async {
-    sharedPreferences.setString(AppConstants.LANGUAGE_CODE, locale.languageCode);
+    sharedPreferences.setString(
+        AppConstants.LANGUAGE_CODE, locale.languageCode);
     sharedPreferences.setString(AppConstants.COUNTRY_CODE, locale.countryCode);
   }
 
@@ -66,7 +69,7 @@ class LocalizationController extends GetxController {
 
   void searchLanguage(String query) {
     if (query.isEmpty) {
-      _languages  = [];
+      _languages = [];
       _languages = AppConstants.languages;
     } else {
       _selectedIndex = -1;

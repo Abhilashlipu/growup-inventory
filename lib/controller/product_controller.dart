@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:six_pos/controller/auth_controller.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/limite_stock_product_model.dart';
-import 'package:six_pos/data/model/response/product_model.dart';
+import 'package:grow_up/controller/auth_controller.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/limite_stock_product_model.dart';
+import 'package:grow_up/data/model/response/product_model.dart';
 
-import 'package:six_pos/data/repository/product_repo.dart';
-import 'package:six_pos/view/base/custom_snackbar.dart';
+import 'package:grow_up/data/repository/product_repo.dart';
+import 'package:grow_up/view/base/custom_snackbar.dart';
 import 'package:http/http.dart' as http;
 
-class ProductController extends GetxController implements GetxService{
+class ProductController extends GetxController implements GetxService {
   final ProductRepo productRepo;
   ProductController({@required this.productRepo});
 
@@ -34,10 +34,11 @@ class ProductController extends GetxController implements GetxService{
   int get limitedStockProductListLength => _limitedStockProductListLength;
 
   List<Products> _productList = [];
-  List<Products> get productList =>_productList;
+  List<Products> get productList => _productList;
 
   List<StockLimitedProducts> _limitedStockProductList = [];
-  List<StockLimitedProducts> get limitedStockProductList =>_limitedStockProductList;
+  List<StockLimitedProducts> get limitedStockProductList =>
+      _limitedStockProductList;
 
   TextEditingController _productNameController = TextEditingController();
   TextEditingController get productNameController => _productNameController;
@@ -46,74 +47,74 @@ class ProductController extends GetxController implements GetxService{
   TextEditingController _productSkuController = TextEditingController();
   TextEditingController get productSkuController => _productSkuController;
 
-  TextEditingController _productSellingPriceController = TextEditingController();
-  TextEditingController get productSellingPriceController => _productSellingPriceController;
+  TextEditingController _productSellingPriceController =
+      TextEditingController();
+  TextEditingController get productSellingPriceController =>
+      _productSellingPriceController;
 
-  TextEditingController _productPurchasePriceController = TextEditingController();
-  TextEditingController get productPurchasePriceController => _productPurchasePriceController;
+  TextEditingController _productPurchasePriceController =
+      TextEditingController();
+  TextEditingController get productPurchasePriceController =>
+      _productPurchasePriceController;
 
   TextEditingController _productTaxController = TextEditingController();
   TextEditingController get productTaxController => _productTaxController;
 
   TextEditingController _productDiscountController = TextEditingController();
-  TextEditingController get productDiscountController => _productDiscountController;
+  TextEditingController get productDiscountController =>
+      _productDiscountController;
 
   TextEditingController _productQuantityController = TextEditingController();
-  TextEditingController get productQuantityController => _productQuantityController;
-
+  TextEditingController get productQuantityController =>
+      _productQuantityController;
 
   int _selectionTabIndex = 0;
-  int get selectionTabIndex =>_selectionTabIndex;
+  int get selectionTabIndex => _selectionTabIndex;
   String _selectedDiscountType = '';
-  String get selectedDiscountType =>_selectedDiscountType;
+  String get selectedDiscountType => _selectedDiscountType;
 
-  File _selectedFileForImport ;
-  File get selectedFileForImport =>_selectedFileForImport;
+  File _selectedFileForImport;
+  File get selectedFileForImport => _selectedFileForImport;
 
   String _bulkImportSampleFilePath = '';
-  String get bulkImportSampleFilePath =>_bulkImportSampleFilePath;
-
+  String get bulkImportSampleFilePath => _bulkImportSampleFilePath;
 
   String _printBarCode = '';
-  String get printBarCode =>_printBarCode;
-
+  String get printBarCode => _printBarCode;
 
   String _bulkExportFilePath = '';
-  String get bulkExportFilePath =>_bulkExportFilePath;
+  String get bulkExportFilePath => _bulkExportFilePath;
 
   int _barCodeQuantity = 0;
   int get barCodeQuantity => _barCodeQuantity;
   bool _isUpdate = false;
-  bool get isUpdate =>_isUpdate;
-
-
-
+  bool get isUpdate => _isUpdate;
 
   final picker = ImagePicker();
   XFile _productImage;
-  XFile get productImage=> _productImage;
+  XFile get productImage => _productImage;
   void pickImage(bool isRemove) async {
-    if(isRemove) {
+    if (isRemove) {
       _productImage = null;
-    }else {
-      _productImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    } else {
+      _productImage =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
     }
     update();
   }
 
-
-  Future<void> getProductList( int offset, {bool reload = false}) async {
-    if(reload){
+  Future<void> getProductList(int offset, {bool reload = false}) async {
+    if (reload) {
       _productList = [];
     }
     _isGetting = true;
     Response response = await productRepo.getProductList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _productList.addAll(ProductModel.fromJson(response.body).products);
       _productListLength = ProductModel.fromJson(response.body).total;
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
@@ -122,33 +123,33 @@ class ProductController extends GetxController implements GetxService{
 
   Future<void> getSearchProductList(String name) async {
     Response response = await productRepo.searchProduct(name);
-    if(response.body != {} &&  response.statusCode == 200) {
-      _productList =[];
+    if (response.body != {} && response.statusCode == 200) {
+      _productList = [];
       _productList.addAll(ProductModel.fromJson(response.body).products);
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-
-
-
-
-  Future<void> getLimitedStockProductList( int offset, {bool reload = false}) async {
-    if(reload){
+  Future<void> getLimitedStockProductList(int offset,
+      {bool reload = false}) async {
+    if (reload) {
       _limitedStockProductList = [];
     }
     _isGetting = true;
     Response response = await productRepo.getLimitedStockProductList(offset);
-    if(response.statusCode == 200) {
-      _limitedStockProductList.addAll(LimitedStockProductModel.fromJson(response.body).stockLimitedProducts);
-      _limitedStockProductListLength = LimitedStockProductModel.fromJson(response.body).total;
+    if (response.statusCode == 200) {
+      _limitedStockProductList.addAll(
+          LimitedStockProductModel.fromJson(response.body)
+              .stockLimitedProducts);
+      _limitedStockProductListLength =
+          LimitedStockProductModel.fromJson(response.body).total;
 
       _isGetting = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
@@ -157,8 +158,9 @@ class ProductController extends GetxController implements GetxService{
 
   Future<void> updateProductQuantity(int productId, int quantity) async {
     _isUpdate = true;
-    Response response = await productRepo.updateProductQuantity(productId, quantity);
-    if(response.statusCode == 200) {
+    Response response =
+        await productRepo.updateProductQuantity(productId, quantity);
+    if (response.statusCode == 200) {
       _productQuantityController.clear();
       getLimitedStockProductList(1, reload: true);
       getProductList(1, reload: true);
@@ -166,19 +168,28 @@ class ProductController extends GetxController implements GetxService{
       String message = map['message'];
       showCustomSnackBar(message, isError: false);
       _isUpdate = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isUpdate = false;
     update();
   }
 
-  Future<http.StreamedResponse> addProduct(Products product, String category, String subCategory, int brandId, int supplierId, bool isUpdate) async {
+  Future<http.StreamedResponse> addProduct(Products product, String category,
+      String subCategory, int brandId, int supplierId, bool isUpdate) async {
     _isLoading = true;
     update();
     print('=======image =======>$_productImage');
-    http.StreamedResponse response = await productRepo.addProduct(product,category,subCategory,brandId,supplierId, _productImage, Get.find<AuthController>().getUserToken(), isUpdate: isUpdate);
-    if(response.statusCode == 200) {
+    http.StreamedResponse response = await productRepo.addProduct(
+        product,
+        category,
+        subCategory,
+        brandId,
+        supplierId,
+        _productImage,
+        Get.find<AuthController>().getUserToken(),
+        isUpdate: isUpdate);
+    if (response.statusCode == 200) {
       _productImage = null;
       getProductList(1, reload: true);
       _productNameController.clear();
@@ -191,8 +202,12 @@ class ProductController extends GetxController implements GetxService{
       _productQuantityController.clear();
       _isLoading = false;
       Get.back();
-      showCustomSnackBar(isUpdate? 'product_updated_successfully'.tr : 'product_added_successfully'.tr, isError: false);
-    }else {
+      showCustomSnackBar(
+          isUpdate
+              ? 'product_updated_successfully'.tr
+              : 'product_added_successfully'.tr,
+          isError: false);
+    } else {
       _isLoading = false;
       showCustomSnackBar('failed_to_add_product'.tr, isError: false);
     }
@@ -201,23 +216,23 @@ class ProductController extends GetxController implements GetxService{
     return response;
   }
 
-  Future<void> deleteProduct( int productId) async {
+  Future<void> deleteProduct(int productId) async {
     _isGetting = true;
     update();
     Response response = await productRepo.deleteProduct(productId);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       Get.back();
-     getProductList(1, reload: true);
-     showCustomSnackBar('product_deleted_successfully'.tr.tr, isError: false);
+      getProductList(1, reload: true);
+      showCustomSnackBar('product_deleted_successfully'.tr.tr, isError: false);
       _isGetting = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-  void removeImage(){
+  void removeImage() {
     _productImage = null;
     update();
   }
@@ -234,22 +249,23 @@ class ProductController extends GetxController implements GetxService{
 
   void setDiscountTypeIndex(int index, bool notify) {
     _discountTypeIndex = index;
-    if(notify) {
+    if (notify) {
       update();
     }
   }
 
-  void setIndexForTabBar(int index){
+  void setIndexForTabBar(int index) {
     _selectionTabIndex = index;
     update();
   }
 
-  void setSelectedDiscountType(String type){
+  void setSelectedDiscountType(String type) {
     _selectedDiscountType = type;
     print('selected discount type is ==>$_selectedDiscountType');
     update();
   }
-  void setSelectedFileName(File fileName){
+
+  void setSelectedFileName(File fileName) {
     _selectedFileForImport = fileName;
     print('selected discount type is ==>$_selectedDiscountType');
     update();
@@ -258,30 +274,29 @@ class ProductController extends GetxController implements GetxService{
   Future<void> getSampleFile() async {
     _isGetting = true;
     Response response = await productRepo.downloadSampleFile();
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       Map map = response.body;
       _bulkImportSampleFilePath = map['product_bulk_file'];
       print('download url is ===> $_bulkImportSampleFilePath');
       _isGetting = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-
   Future<http.StreamedResponse> bulkImportFile() async {
     _isLoading = true;
     update();
-    http.StreamedResponse response = await productRepo.bulkImport(_selectedFileForImport, Get.find<AuthController>().getUserToken());
-    if(response.statusCode == 200) {
+    http.StreamedResponse response = await productRepo.bulkImport(
+        _selectedFileForImport, Get.find<AuthController>().getUserToken());
+    if (response.statusCode == 200) {
       _isLoading = false;
       Get.back();
       showCustomSnackBar('product_imported_successfully'.tr, isError: false);
       _selectedFileForImport = null;
-
-    }else {
+    } else {
       _isLoading = false;
     }
     _isLoading = false;
@@ -289,36 +304,32 @@ class ProductController extends GetxController implements GetxService{
     return response;
   }
 
-
-
-
   Future<void> bulkExportFile() async {
     _isGetting = true;
     Response response = await productRepo.bulkExport();
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       Map map = response.body;
       _bulkExportFilePath = map['excel_report'];
       _isGetting = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
 
-  void setBarCodeQuantity(int quantity){
+  void setBarCodeQuantity(int quantity) {
     _barCodeQuantity = quantity;
     print('Quantity is ==>$_barCodeQuantity');
     update();
   }
 
-
   void downloadFile(String url, String dir) async {
-     await FlutterDownloader.enqueue(
+    await FlutterDownloader.enqueue(
       url: '$url',
       savedDir: '$dir',
       showNotification: true,
-       saveInPublicStorage: true,
+      saveInPublicStorage: true,
       openFileFromNotification: true,
     );
   }
@@ -326,16 +337,15 @@ class ProductController extends GetxController implements GetxService{
   Future<void> barCodeDownload(int id, int quantity) async {
     _isGetting = true;
     Response response = await productRepo.barCodeDownLoad(id, quantity);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _printBarCode = response.body;
       showCustomSnackBar('barcode_downloaded_successfully'.tr, isError: false);
       print('download url is ===> $_bulkImportSampleFilePath');
       _isGetting = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isGetting = false;
     update();
   }
-
 }

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:six_pos/controller/cart_controller.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/account_model.dart';
-import 'package:six_pos/data/model/response/transaction_model.dart';
-import 'package:six_pos/data/model/response/transaction_type_model.dart';
-import 'package:six_pos/data/repository/transaction_repo.dart';
-import 'package:six_pos/view/base/custom_snackbar.dart';
+import 'package:grow_up/controller/cart_controller.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/account_model.dart';
+import 'package:grow_up/data/model/response/transaction_model.dart';
+import 'package:grow_up/data/model/response/transaction_type_model.dart';
+import 'package:grow_up/data/repository/transaction_repo.dart';
+import 'package:grow_up/view/base/custom_snackbar.dart';
 
-class TransactionController extends GetxController implements GetxService{
+class TransactionController extends GetxController implements GetxService {
   final TransactionRepo transactionRepo;
   TransactionController({@required this.transactionRepo});
   bool _isLoading = false;
@@ -47,41 +47,38 @@ class TransactionController extends GetxController implements GetxService{
   List<int> get toAccountIds => _toAccountIds;
 
   List<Accounts> _accountList;
-  List<Accounts> get accountList =>_accountList;
-
+  List<Accounts> get accountList => _accountList;
 
   String _transactionExportFilePath = '';
-  String get transactionExportFilePath =>_transactionExportFilePath;
-
-
-
-
-
+  String get transactionExportFilePath => _transactionExportFilePath;
 
   Future<void> getTransactionList(int offset) async {
     _isLoading = true;
     Response response = await transactionRepo.getTransactionList(offset);
-    if(response.statusCode == 200) {
-      _transactionList.addAll(TransactionModel.fromJson(response.body).transfers);
+    if (response.statusCode == 200) {
+      _transactionList
+          .addAll(TransactionModel.fromJson(response.body).transfers);
       _transactionListLength = TransactionModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-
-  Future<void> getCustomerWiseTransactionListList(int customerId ,int offset) async {
+  Future<void> getCustomerWiseTransactionListList(
+      int customerId, int offset) async {
     _isLoading = true;
-    Response response = await transactionRepo.getCustomerWiseTransactionList(customerId, offset);
-    if(response.statusCode == 200) {
-      _transactionList.addAll(TransactionModel.fromJson(response.body).transfers);
+    Response response = await transactionRepo.getCustomerWiseTransactionList(
+        customerId, offset);
+    if (response.statusCode == 200) {
+      _transactionList
+          .addAll(TransactionModel.fromJson(response.body).transfers);
       _transactionListLength = TransactionModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isLoading = false;
@@ -93,11 +90,12 @@ class TransactionController extends GetxController implements GetxService{
     _transactionTypeIds = [];
     _isLoading = true;
     Response response = await transactionRepo.getTransactionTypeList();
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _transactionTypeList = [];
-      _transactionTypeList.addAll(TransactionTypeModel.fromJson(response.body).types);
-      if(_transactionTypeList.length != 0){
-        for(int index = 0; index < _transactionTypeList.length; index++) {
+      _transactionTypeList
+          .addAll(TransactionTypeModel.fromJson(response.body).types);
+      if (_transactionTypeList.length != 0) {
+        for (int index = 0; index < _transactionTypeList.length; index++) {
           _transactionTypeIds.add(_transactionTypeList[index].id);
         }
         _transactionTypeIndex = _transactionTypeIds[0];
@@ -105,38 +103,42 @@ class TransactionController extends GetxController implements GetxService{
 
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-  Future<void> getTransactionFilter(String startDate, String endDate, int accountId, String accountType) async {
+  Future<void> getTransactionFilter(String startDate, String endDate,
+      int accountId, String accountType) async {
     _transactionList = [];
     _isLoading = true;
-    Response response = await transactionRepo.getTransactionFilter(startDate, endDate, accountId, accountType);
-    if(response.statusCode == 200) {
+    Response response = await transactionRepo.getTransactionFilter(
+        startDate, endDate, accountId, accountType);
+    if (response.statusCode == 200) {
       _transactionList = [];
-      _transactionList.addAll(TransactionModel.fromJson(response.body).transfers);
+      _transactionList
+          .addAll(TransactionModel.fromJson(response.body).transfers);
       _transactionListLength = TransactionModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-
-  Future<void> addTransaction(Transfers transfer, int fromAccountId, int toAccountId) async {
+  Future<void> addTransaction(
+      Transfers transfer, int fromAccountId, int toAccountId) async {
     _isLoading = true;
-    Response response = await transactionRepo.addNewTransaction(transfer, fromAccountId, toAccountId);
-    if(response.statusCode == 200) {
+    Response response = await transactionRepo.addNewTransaction(
+        transfer, fromAccountId, toAccountId);
+    if (response.statusCode == 200) {
       getTransactionList(1);
       Get.back();
-      showCustomSnackBar('transaction_added_successfully'.tr,  isError: false);
+      showCustomSnackBar('transaction_added_successfully'.tr, isError: false);
       _isLoading = false;
-    }else {
+    } else {
       _isLoading = false;
       ApiChecker.checkApi(response);
     }
@@ -144,25 +146,24 @@ class TransactionController extends GetxController implements GetxService{
     update();
   }
 
-
-  Future<void> getTransactionAccountList( int offset) async {
+  Future<void> getTransactionAccountList(int offset) async {
     _fromAccountIndex = 0;
     _toAccountIndex = 0;
     _fromAccountIds = [];
     _toAccountIds = [];
     _isLoading = true;
     Response response = await transactionRepo.getTransactionAccountList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _accountList = [];
       _accountList.addAll(AccountModel.fromJson(response.body).accounts);
-      if(_accountList.length != 0){
-        for(int index = 0; index < _accountList.length; index++) {
+      if (_accountList.length != 0) {
+        for (int index = 0; index < _accountList.length; index++) {
           _fromAccountIds.add(_accountList[index].id);
         }
         _fromAccountIndex = _fromAccountIds[0];
       }
-      if(_accountList.length > 1){
-        for(int index = 0; index < _accountList.length; index++) {
+      if (_accountList.length > 1) {
+        for (int index = 0; index < _accountList.length; index++) {
           _toAccountIds.add(_accountList[index].id);
         }
         _toAccountIndex = _toAccountIds[0];
@@ -170,55 +171,53 @@ class TransactionController extends GetxController implements GetxService{
 
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-
   void addCustomerBalanceIntoAccountList(Accounts accounts) {
-    print('==============koybar===========${Get.find<CartController>().customerId}');
+    print(
+        '==============koybar===========${Get.find<CartController>().customerId}');
     _fromAccountIndex = 0;
     _fromAccountIds = [];
-    if ((_accountList.any((e) => e.id == accounts.id && Get.find<CartController>().customerId == 0)) ) {
-      if(accounts.id == 0){
-        _accountList.removeAt(_accountList.length-1);
-        for(int index = 0; index < _accountList.length; index++) {
+    if ((_accountList.any((e) =>
+        e.id == accounts.id && Get.find<CartController>().customerId == 0))) {
+      if (accounts.id == 0) {
+        _accountList.removeAt(_accountList.length - 1);
+        for (int index = 0; index < _accountList.length; index++) {
+          _fromAccountIds.add(_accountList[index].id);
+        }
+        _fromAccountIndex = _fromAccountIds[0];
+      } else if (_accountList.length != 0) {
+        for (int index = 0; index < _accountList.length; index++) {
           _fromAccountIds.add(_accountList[index].id);
         }
         _fromAccountIndex = _fromAccountIds[0];
       }
-
-      else if(_accountList.length != 0){
-        for(int index = 0; index < _accountList.length; index++) {
-          _fromAccountIds.add(_accountList[index].id);
-        }
-        _fromAccountIndex = _fromAccountIds[0];
-      }
-    }else if ((_accountList.any((e) => e.id != accounts.id && Get.find<CartController>().customerId == 0)) ) {
-        for(int index = 0; index < _accountList.length; index++) {
-          _fromAccountIds.add(_accountList[index].id);
-        }
-        _fromAccountIndex = _fromAccountIds[0];
-
-    }
-    else if ((_accountList.any((e) => e.id == accounts.id &&  Get.find<CartController>().customerId != 0)) ) {
-        for(int index = 0; index < _accountList.length; index++) {
-          _fromAccountIds.add(_accountList[index].id);
-        }
-        _fromAccountIndex = _fromAccountIds[0];
-
-    }else if (_accountList.any((e) => e.id != accounts.id) && Get.find<CartController>().customerId == 0) {
-      for(int index = 0; index < _accountList.length; index++) {
+    } else if ((_accountList.any((e) =>
+        e.id != accounts.id && Get.find<CartController>().customerId == 0))) {
+      for (int index = 0; index < _accountList.length; index++) {
         _fromAccountIds.add(_accountList[index].id);
       }
       _fromAccountIndex = _fromAccountIds[0];
-    }
-    else{
+    } else if ((_accountList.any((e) =>
+        e.id == accounts.id && Get.find<CartController>().customerId != 0))) {
+      for (int index = 0; index < _accountList.length; index++) {
+        _fromAccountIds.add(_accountList[index].id);
+      }
+      _fromAccountIndex = _fromAccountIds[0];
+    } else if (_accountList.any((e) => e.id != accounts.id) &&
+        Get.find<CartController>().customerId == 0) {
+      for (int index = 0; index < _accountList.length; index++) {
+        _fromAccountIds.add(_accountList[index].id);
+      }
+      _fromAccountIndex = _fromAccountIds[0];
+    } else {
       _accountList.add(accounts);
-      if(_accountList.length != 0){
-        for(int index = 0; index < _accountList.length; index++) {
+      if (_accountList.length != 0) {
+        for (int index = 0; index < _accountList.length; index++) {
           _fromAccountIds.add(_accountList[index].id);
         }
         _fromAccountIndex = _fromAccountIds[0];
@@ -228,22 +227,21 @@ class TransactionController extends GetxController implements GetxService{
     update();
   }
 
-
-  Future<void> exportTransactionList(String startDate, String endDate, int accountId, String transactionType) async {
+  Future<void> exportTransactionList(String startDate, String endDate,
+      int accountId, String transactionType) async {
     _isLoading = true;
-    Response response = await transactionRepo.exportTransactionList(startDate, endDate, accountId, transactionType);
-    if(response.statusCode == 200) {
+    Response response = await transactionRepo.exportTransactionList(
+        startDate, endDate, accountId, transactionType);
+    if (response.statusCode == 200) {
       Map map = response.body;
       _transactionExportFilePath = map['excel_report'];
       _isLoading = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isLoading = false;
     update();
   }
-
-
 
   void showBottomLoader() {
     _isLoading = true;
@@ -255,29 +253,28 @@ class TransactionController extends GetxController implements GetxService{
     update();
   }
 
-  void setAccountIndex(int index, String type , bool notify) {
-    if(type == 'from'){
+  void setAccountIndex(int index, String type, bool notify) {
+    if (type == 'from') {
       _fromAccountIndex = index;
       _selectedFromAccountId = _fromAccountIndex;
       print('dd==============>$_selectedFromAccountId');
-    }else{
+    } else {
       _toAccountIndex = index;
       _selectedToAccountId = _toAccountIndex;
     }
 
-    if(notify) {
+    if (notify) {
       update();
     }
   }
 
-  void setTransactionTypeIndex(int index , bool notify) {
+  void setTransactionTypeIndex(int index, bool notify) {
     _transactionTypeIndex = index;
     print('=====TT=====>$_transactionTypeIndex');
-    if(notify) {
+    if (notify) {
       update();
     }
   }
-
 
   DateTime _startDate;
   DateTime _endDate;
@@ -286,25 +283,22 @@ class TransactionController extends GetxController implements GetxService{
   DateTime get endDate => _endDate;
   DateFormat get dateFormat => _dateFormat;
 
-  void selectDate(String type, BuildContext context){
+  void selectDate(String type, BuildContext context) {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2022),
       lastDate: DateTime(2030),
     ).then((date) {
-      if (type == 'start'){
+      if (type == 'start') {
         _startDate = date;
-      }else{
+      } else {
         _endDate = date;
       }
-      if(date == null){
+      if (date == null) {
         print('Null');
       }
       update();
     });
   }
-
-
-
 }

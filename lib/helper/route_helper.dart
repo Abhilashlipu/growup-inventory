@@ -1,6 +1,6 @@
-import 'package:six_pos/view/screens/dashboard/nav_bar_screen.dart';
-import 'package:six_pos/view/screens/shop/shop_settings.dart';
-import 'package:six_pos/view/screens/splash/splash_screen.dart';
+import 'package:grow_up/view/screens/dashboard/nav_bar_screen.dart';
+import 'package:grow_up/view/screens/shop/shop_settings.dart';
+import 'package:grow_up/view/screens/splash/splash_screen.dart';
 import 'package:get/get.dart';
 
 class RouteHelper {

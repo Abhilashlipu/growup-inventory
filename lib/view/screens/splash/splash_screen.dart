@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/controller/auth_controller.dart';
-import 'package:six_pos/controller/splash_controller.dart';
-import 'package:six_pos/helper/gradient_color_helper.dart';
-import 'package:six_pos/util/images.dart';
-import 'package:six_pos/view/screens/auth/log_in_screen.dart';
-import 'package:six_pos/view/screens/dashboard/nav_bar_screen.dart';
+import 'package:grow_up/controller/auth_controller.dart';
+import 'package:grow_up/controller/splash_controller.dart';
+import 'package:grow_up/helper/gradient_color_helper.dart';
+import 'package:grow_up/util/images.dart';
+import 'package:grow_up/view/screens/auth/log_in_screen.dart';
+import 'package:grow_up/view/screens/dashboard/nav_bar_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -23,10 +23,15 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     bool _firstTime = true;
-    _onConnectivityChanged = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if(!_firstTime) {
-        bool isNotConnected = result != ConnectivityResult.wifi && result != ConnectivityResult.mobile;
-        isNotConnected ? SizedBox() : ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    _onConnectivityChanged = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!_firstTime) {
+        bool isNotConnected = result != ConnectivityResult.wifi &&
+            result != ConnectivityResult.mobile;
+        isNotConnected
+            ? SizedBox()
+            : ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: isNotConnected ? Colors.red : Colors.green,
           duration: Duration(seconds: isNotConnected ? 6000 : 3),
@@ -35,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
             textAlign: TextAlign.center,
           ),
         ));
-        if(!isNotConnected) {
+        if (!isNotConnected) {
           _route();
         }
       }
@@ -44,7 +49,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Get.find<SplashController>().initSharedData();
     _route();
-
   }
 
   @override
@@ -58,9 +62,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Get.find<SplashController>().getConfigData().then((value) {
       Timer(Duration(seconds: 1), () async {
         if (Get.find<AuthController>().isLoggedIn()) {
-          Get.to(()=> NavBarScreen());
+          Get.to(() => NavBarScreen());
         } else {
-          Get.to(()=> LogInScreen());
+          Get.to(() => LogInScreen());
         }
       });
     });
@@ -82,7 +86,9 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(width: width*.7, child: Image.asset(Images.Splash_logo, height: 175)),
+              SizedBox(
+                  width: width * .7,
+                  child: Image.asset(Images.Splash_logo, height: 175)),
             ],
           ),
         ),

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/controller/customer_controller.dart';
-import 'package:six_pos/controller/order_controller.dart';
-import 'package:six_pos/util/images.dart';
-import 'package:six_pos/view/base/custom_app_bar.dart';
-import 'package:six_pos/view/base/custom_drawer.dart';
-import 'package:six_pos/view/base/custom_header.dart';
-import 'package:six_pos/view/screens/order/widget/order_list_view.dart';
-import 'package:six_pos/view/screens/user/widget/customer_wise_order_list.dart';
+import 'package:grow_up/controller/customer_controller.dart';
+import 'package:grow_up/controller/order_controller.dart';
+import 'package:grow_up/util/images.dart';
+import 'package:grow_up/view/base/custom_app_bar.dart';
+import 'package:grow_up/view/base/custom_drawer.dart';
+import 'package:grow_up/view/base/custom_header.dart';
+import 'package:grow_up/view/screens/order/widget/order_list_view.dart';
+import 'package:grow_up/view/screens/user/widget/customer_wise_order_list.dart';
+
 class OrderScreen extends StatefulWidget {
   final bool fromNavBar;
   final bool isCustomer;
   final int customerId;
-  const OrderScreen({Key key, this.fromNavBar = true, this.isCustomer = false, this.customerId}) : super(key: key);
+  const OrderScreen(
+      {Key key,
+      this.fromNavBar = true,
+      this.isCustomer = false,
+      this.customerId})
+      : super(key: key);
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -21,18 +27,17 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> {
   final ScrollController _scrollController = ScrollController();
 
-
   @override
   void initState() {
     super.initState();
-    if(widget.isCustomer){
-      Get.find<CustomerController>().getCustomerWiseOrderListList(widget.customerId, 1);
-    }else{
+    if (widget.isCustomer) {
+      Get.find<CustomerController>()
+          .getCustomerWiseOrderListList(widget.customerId, 1);
+    } else {
       Get.find<OrderController>().getOrderList('1');
     }
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +48,11 @@ class _OrderScreenState extends State<OrderScreen> {
           color: Theme.of(context).cardColor,
           backgroundColor: Theme.of(context).primaryColor,
           onRefresh: () async {
-            if(widget.isCustomer){
-              Get.find<CustomerController>().getCustomerWiseOrderListList(widget.customerId, 1, reload:  true);
-            }else{
+            if (widget.isCustomer) {
+              Get.find<CustomerController>().getCustomerWiseOrderListList(
+                  widget.customerId, 1,
+                  reload: true);
+            } else {
               Get.find<OrderController>().getOrderList('1', reload: true);
             }
             return false;
@@ -54,16 +61,23 @@ class _OrderScreenState extends State<OrderScreen> {
             controller: _scrollController,
             slivers: [
               SliverToBoxAdapter(
-                child: Column(children: [
-                  CustomHeader(title: 'order_list'.tr, headerImage: Images.people_icon),
-                  widget.isCustomer?  CustomerWiseOrderListView(scrollController: _scrollController, customerId: widget.customerId) : OrderListView(scrollController: _scrollController)
-                ],),
+                child: Column(
+                  children: [
+                    CustomHeader(
+                        title: 'order_list'.tr,
+                        headerImage: Images.people_icon),
+                    widget.isCustomer
+                        ? CustomerWiseOrderListView(
+                            scrollController: _scrollController,
+                            customerId: widget.customerId)
+                        : OrderListView(scrollController: _scrollController)
+                  ],
+                ),
               )
             ],
           ),
         ),
       ),
-
     );
   }
 }

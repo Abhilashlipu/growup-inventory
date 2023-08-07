@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:six_pos/util/dimensions.dart';
-import 'package:six_pos/util/styles.dart';
+import 'package:grow_up/util/dimensions.dart';
+import 'package:grow_up/util/styles.dart';
 
 class InvoiceElementView extends StatelessWidget {
   final bool isBold;
@@ -19,38 +19,59 @@ class InvoiceElementView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Row(children: [
-      Expanded(flex: 5,
-        child: serial != null ? Row(mainAxisAlignment: MainAxisAlignment.start,children: [
-          _textView(context, serial, isBold),
-          SizedBox(width: Dimensions.PADDING_SIZE_DEFAULT),
-
-          _textView(context, title, isBold),
-
-        ],) : Text(title, style: isBold ? fontSizeBold.copyWith(
-          color: Theme.of(context).primaryColor,
-          fontSize: Dimensions.FONT_SIZE_LARGE,
-        ) : fontSizeRegular.copyWith(color: Theme.of(context).hintColor)),
-      ),
-
-      Expanded(flex: 3,
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          quantity != null ? _textView(context, quantity, isBold) : SizedBox(),
-          SizedBox(width: Dimensions.PADDING_SIZE_DEFAULT),
-
-          Text(price, style: isBold ? fontSizeBold.copyWith(
-            color: Theme.of(context).primaryColor,
-            fontSize: Dimensions.FONT_SIZE_LARGE,
-          ) : fontSizeRegular.copyWith(color: Theme.of(context).hintColor)),
-        ],),
-      ),
-    ],);
+    return Row(
+      children: [
+        Expanded(
+          flex: 5,
+          child: serial != null
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _textView(context, serial, isBold),
+                    SizedBox(width: Dimensions.PADDING_SIZE_DEFAULT),
+                    _textView(context, title, isBold),
+                  ],
+                )
+              : Text(title,
+                  style: isBold
+                      ? fontSizeBold.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: Dimensions.FONT_SIZE_LARGE,
+                        )
+                      : fontSizeRegular.copyWith(
+                          color: Theme.of(context).hintColor)),
+        ),
+        Expanded(
+          flex: 3,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              quantity != null
+                  ? _textView(context, quantity, isBold)
+                  : SizedBox(),
+              SizedBox(width: Dimensions.PADDING_SIZE_DEFAULT),
+              Text(price,
+                  style: isBold
+                      ? fontSizeBold.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: Dimensions.FONT_SIZE_LARGE,
+                        )
+                      : fontSizeRegular.copyWith(
+                          color: Theme.of(context).hintColor)),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
-  Text _textView(BuildContext context,String text, bool isBold) {
-    return Text(text, style: isBold ? fontSizeRegular.copyWith(
-            color: Theme.of(context).primaryColor,
-            fontSize: Dimensions.FONT_SIZE_LARGE,
-          ) : fontSizeRegular.copyWith(color: Theme.of(context).hintColor));
+  Text _textView(BuildContext context, String text, bool isBold) {
+    return Text(text,
+        style: isBold
+            ? fontSizeRegular.copyWith(
+                color: Theme.of(context).primaryColor,
+                fontSize: Dimensions.FONT_SIZE_LARGE,
+              )
+            : fontSizeRegular.copyWith(color: Theme.of(context).hintColor));
   }
 }

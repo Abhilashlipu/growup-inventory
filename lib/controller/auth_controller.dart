@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:six_pos/data/model/response/profile_model.dart';
-import 'package:six_pos/data/model/response/response_model.dart';
-import 'package:six_pos/data/repository/auth_repo.dart';
-import 'package:six_pos/view/base/custom_snackbar.dart';
-
+import 'package:grow_up/data/model/response/profile_model.dart';
+import 'package:grow_up/data/model/response/response_model.dart';
+import 'package:grow_up/data/repository/auth_repo.dart';
+import 'package:grow_up/view/base/custom_snackbar.dart';
 
 class AuthController extends GetxController implements GetxService {
   final AuthRepo authRepo;
@@ -25,7 +24,8 @@ class AuthController extends GetxController implements GetxService {
   ProfileModel get profileModel => _profileModel;
   XFile get pickedFile => _pickedFile;
 
-  Future<ResponseModel> login({@required String emailAddress,@required String password}) async {
+  Future<ResponseModel> login(
+      {@required String emailAddress, @required String password}) async {
     _isLoading = true;
     update();
     Response response = await authRepo.login(emailAddress, password);
@@ -34,7 +34,7 @@ class AuthController extends GetxController implements GetxService {
       authRepo.saveUserToken(response.body['token']);
       responseModel = ResponseModel(true, 'successful');
       _isLoading = false;
-    }else if(response.statusCode == 422){
+    } else if (response.statusCode == 422) {
       Map map = response.body;
       String message = map['message'];
       showCustomSnackBar(message, isError: true);
@@ -57,7 +57,6 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-
   Future<void> getProfile() async {
     Response response = await authRepo.getProfileInfo();
     if (response.statusCode == 200) {}
@@ -71,7 +70,8 @@ class AuthController extends GetxController implements GetxService {
     return await authRepo.clearSharedData();
   }
 
-  void saveUserEmailAndPassword({@required String emailAddress,@required String password}) {
+  void saveUserEmailAndPassword(
+      {@required String emailAddress, @required String password}) {
     authRepo.saveUserEmailAndPassword(emailAddress, password);
   }
 
@@ -94,6 +94,4 @@ class AuthController extends GetxController implements GetxService {
   String getUserToken() {
     return authRepo.getUserToken();
   }
-
-
 }

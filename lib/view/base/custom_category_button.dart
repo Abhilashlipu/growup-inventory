@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:six_pos/helper/gradient_color_helper.dart';
-import 'package:six_pos/util/dimensions.dart';
-import 'package:six_pos/util/styles.dart';
+import 'package:grow_up/helper/gradient_color_helper.dart';
+import 'package:grow_up/util/dimensions.dart';
+import 'package:grow_up/util/styles.dart';
 
 class CustomCategoryButton extends StatelessWidget {
   final String icon;
@@ -16,7 +16,8 @@ class CustomCategoryButton extends StatelessWidget {
     @required this.buttonText,
     this.isSelected = false,
     this.padding = Dimensions.PADDING_SIZE_DEFAULT,
-    this.isDrawer = true, this.onTap,
+    this.isDrawer = true,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -24,12 +25,17 @@ class CustomCategoryButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: isDrawer? EdgeInsets.all(0.0):
-        EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_DEFAULT, vertical: Dimensions.PADDING_SIZE_SMALL),
+        padding: isDrawer
+            ? EdgeInsets.all(0.0)
+            : EdgeInsets.symmetric(
+                horizontal: Dimensions.PADDING_SIZE_DEFAULT,
+                vertical: Dimensions.PADDING_SIZE_SMALL),
         child: Container(
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
-              borderRadius: isDrawer ? BorderRadius.zero : BorderRadius.circular(Dimensions.PADDING_SIZE_SMALL),
+              borderRadius: isDrawer
+                  ? BorderRadius.zero
+                  : BorderRadius.circular(Dimensions.PADDING_SIZE_SMALL),
               gradient: GradientColorHelper.gradientColor(opacity: 0.03),
             ),
             child: Padding(
@@ -38,16 +44,21 @@ class CustomCategoryButton extends StatelessWidget {
                 Image.asset(
                   icon,
                   width: 30,
-                  color: isSelected ? Theme.of(context).secondaryHeaderColor : Theme.of(context).primaryColor,
+                  color: isSelected
+                      ? Theme.of(context).secondaryHeaderColor
+                      : Theme.of(context).primaryColor,
                 ),
-
-                Text(buttonText, style: fontSizeMedium.copyWith(
-                  color: isSelected ?  Theme.of(context).secondaryHeaderColor : Theme.of(context).primaryColor,
-                  fontSize: Dimensions.fontSizeExtraLarge,
-                ),),
+                Text(
+                  buttonText,
+                  style: fontSizeMedium.copyWith(
+                    color: isSelected
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Theme.of(context).primaryColor,
+                    fontSize: Dimensions.fontSizeExtraLarge,
+                  ),
+                ),
               ]),
-            )
-        ),
+            )),
       ),
     );
   }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/view/screens/home/home_screens.dart';
-import 'package:six_pos/view/screens/pos/pos_screen.dart';
-import 'package:six_pos/view/screens/product/limited_product_screen.dart';
-import 'package:six_pos/view/screens/product/product_list_with_category.dart';
+import 'package:grow_up/view/screens/home/home_screens.dart';
+import 'package:grow_up/view/screens/pos/pos_screen.dart';
+import 'package:grow_up/view/screens/product/limited_product_screen.dart';
+import 'package:grow_up/view/screens/product/product_list_with_category.dart';
 
-class MenuController extends GetxController implements GetxService{
+class MenuController extends GetxController implements GetxService {
   int _currentTab = 0;
   int get currentTab => _currentTab;
   final List<Widget> screen = [
@@ -17,7 +17,7 @@ class MenuController extends GetxController implements GetxService{
   Widget _currentScreen = HomeScreen();
   Widget get currentScreen => _currentScreen;
 
-  resetNavBar(){
+  resetNavBar() {
     _currentScreen = HomeScreen();
     _currentTab = 0;
   }
@@ -25,7 +25,7 @@ class MenuController extends GetxController implements GetxService{
   selectHomePage() {
     _currentScreen = HomeScreen();
     _currentTab = 0;
-     update();
+    update();
   }
 
   selectPosScreen() {

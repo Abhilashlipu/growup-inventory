@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/controller/unit_controller.dart';
-import 'package:six_pos/util/dimensions.dart';
-import 'package:six_pos/util/images.dart';
-import 'package:six_pos/view/base/custom_app_bar.dart';
-import 'package:six_pos/view/base/custom_drawer.dart';
-import 'package:six_pos/view/base/custom_header.dart';
-import 'package:six_pos/view/screens/unit/widget/add_new_unit_screen.dart';
-import 'package:six_pos/view/screens/unit/widget/unit_list_view.dart';
+import 'package:grow_up/controller/unit_controller.dart';
+import 'package:grow_up/util/dimensions.dart';
+import 'package:grow_up/util/images.dart';
+import 'package:grow_up/view/base/custom_app_bar.dart';
+import 'package:grow_up/view/base/custom_drawer.dart';
+import 'package:grow_up/view/base/custom_header.dart';
+import 'package:grow_up/view/screens/unit/widget/add_new_unit_screen.dart';
+import 'package:grow_up/view/screens/unit/widget/unit_list_view.dart';
+
 class UnitListViewScreen extends StatefulWidget {
   const UnitListViewScreen({Key key}) : super(key: key);
 
@@ -16,7 +17,6 @@ class UnitListViewScreen extends StatefulWidget {
 }
 
 class _UnitListViewScreenState extends State<UnitListViewScreen> {
-
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -43,9 +43,12 @@ class _UnitListViewScreenState extends State<UnitListViewScreen> {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    CustomHeader(title: 'unit_list'.tr, headerImage: Images.categories),
-                    SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT    ),
-                    UnitListView(scrollController: _scrollController,),
+                    CustomHeader(
+                        title: 'unit_list'.tr, headerImage: Images.categories),
+                    SizedBox(height: Dimensions.PADDING_SIZE_DEFAULT),
+                    UnitListView(
+                      scrollController: _scrollController,
+                    ),
                     SizedBox(height: 100),
                   ],
                 ),
@@ -54,11 +57,13 @@ class _UnitListViewScreenState extends State<UnitListViewScreen> {
           ),
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(backgroundColor: Theme.of(context).primaryColor,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           Get.to(AddNewUnit());
-        },child: Image.asset(Images.add_category_icon),),
+        },
+        child: Image.asset(Images.add_category_icon),
+      ),
     );
   }
 }

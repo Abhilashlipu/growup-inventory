@@ -1,4 +1,5 @@
-import 'package:six_pos/data/model/response/categoriesProductModel.dart';
+import 'package:grow_up/data/model/response/categoriesProductModel.dart';
+
 class CartModel {
   double _price;
   double _discountAmount;
@@ -6,11 +7,7 @@ class CartModel {
   double _taxAmount;
   CategoriesProduct _product;
 
-  CartModel(
-        double price,
-        double discountAmount,
-        int quantity,
-        double taxAmount,
+  CartModel(double price, double discountAmount, int quantity, double taxAmount,
       CategoriesProduct product) {
     this._price = price;
     this._discountAmount = discountAmount;
@@ -48,5 +45,3 @@ class CartModel {
     return data;
   }
 }
-
-

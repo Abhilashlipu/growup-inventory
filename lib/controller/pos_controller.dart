@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/customer_model.dart';
-import 'package:six_pos/data/model/response/product_model.dart';
-import 'package:six_pos/data/repository/pos_repo.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/customer_model.dart';
+import 'package:grow_up/data/model/response/product_model.dart';
+import 'package:grow_up/data/repository/pos_repo.dart';
 
-class PosController extends GetxController implements GetxService{
+class PosController extends GetxController implements GetxService {
   final PosRepo posRepo;
   PosController({@required this.posRepo});
 
-
-
   List<Products> _productList;
-  List<Products> get productList =>_productList;
+  List<Products> get productList => _productList;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -23,26 +21,23 @@ class PosController extends GetxController implements GetxService{
   List<int> get customerIds => _customerIds;
 
   List<Customers> _customerList;
-  List<Customers> get customerList =>_customerList;
+  List<Customers> get customerList => _customerList;
 
   int _customerSelectedIndex = 0;
   int get customerSelectedIndex => _customerSelectedIndex;
 
-  Future<void> getCustomerList( int offset) async {
-
+  Future<void> getCustomerList(int offset) async {
     _customerIndex = 0;
     _customerIds.add(0);
     Response response = await posRepo.getCustomerList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _customerList = [];
       _customerList.addAll(CustomerModel.fromJson(response.body).customers);
       _customerIndex = 0;
-      for(int index = 0; index < _customerList.length; index++) {
+      for (int index = 0; index < _customerList.length; index++) {
         _customerIds.add(_customerList[index].id);
       }
-
-
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     _isLoading = false;
@@ -51,7 +46,7 @@ class PosController extends GetxController implements GetxService{
 
   void setCustomerIndex(int index, bool notify) {
     _customerIndex = index;
-    if(notify) {
+    if (notify) {
       update();
     }
   }
@@ -60,5 +55,4 @@ class PosController extends GetxController implements GetxService{
     _customerSelectedIndex = selectedIndex;
     update();
   }
-
 }

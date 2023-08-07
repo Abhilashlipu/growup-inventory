@@ -6,13 +6,11 @@ import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pos_printer_platform/flutter_pos_printer.dart';
 import 'package:get/get.dart';
-import 'package:six_pos/data/model/response/config_model.dart';
-import 'package:six_pos/data/model/response/invoice_model.dart';
-import 'package:six_pos/helper/date_converter.dart';
-import 'package:six_pos/view/base/custom_app_bar.dart';
-import 'package:six_pos/view/base/custom_drawer.dart';
-
-
+import 'package:grow_up/data/model/response/config_model.dart';
+import 'package:grow_up/data/model/response/invoice_model.dart';
+import 'package:grow_up/helper/date_converter.dart';
+import 'package:grow_up/view/base/custom_app_bar.dart';
+import 'package:grow_up/view/base/custom_drawer.dart';
 
 class InVoicePrintScreen extends StatefulWidget {
   final Invoice invoice;
@@ -20,7 +18,14 @@ class InVoicePrintScreen extends StatefulWidget {
   final int orderId;
   final double discountProduct;
   final double total;
-  const InVoicePrintScreen({Key key, this.invoice, this.configModel, this.orderId, this.discountProduct, this.total}) : super(key: key);
+  const InVoicePrintScreen(
+      {Key key,
+      this.invoice,
+      this.configModel,
+      this.orderId,
+      this.discountProduct,
+      this.total})
+      : super(key: key);
 
   @override
   State<InVoicePrintScreen> createState() => _InVoicePrintScreenState();
@@ -49,18 +54,21 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
     _scan();
 
     // subscription to listen change status of bluetooth connection
-    _subscriptionBtStatus = PrinterManager.instance.stateBluetooth.listen((status) {
+    _subscriptionBtStatus =
+        PrinterManager.instance.stateBluetooth.listen((status) {
       log(' ----------------- status bt $status ------------------ ');
       _currentStatus = status;
 
       if (status == BTStatus.connected && pendingTask != null) {
         if (Platform.isAndroid) {
           Future.delayed(const Duration(milliseconds: 1000), () {
-            PrinterManager.instance.send(type: PrinterType.bluetooth, bytes: pendingTask);
+            PrinterManager.instance
+                .send(type: PrinterType.bluetooth, bytes: pendingTask);
             pendingTask = null;
           });
         } else if (Platform.isIOS) {
-          PrinterManager.instance.send(type: PrinterType.bluetooth, bytes: pendingTask);
+          PrinterManager.instance
+              .send(type: PrinterType.bluetooth, bytes: pendingTask);
           pendingTask = null;
         }
       }
@@ -79,7 +87,9 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
   // method to scan devices according PrinterType
   void _scan() {
     devices.clear();
-    _subscription = printerManager.discovery(type: defaultPrinterType, isBle: _isBle).listen((device) {
+    _subscription = printerManager
+        .discovery(type: defaultPrinterType, isBle: _isBle)
+        .listen((device) {
       devices.add(BluetoothPrinter(
         deviceName: device.name,
         address: device.address,
@@ -119,8 +129,11 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
 
   void selectDevice(BluetoothPrinter device) async {
     if (selectedPrinter != null) {
-      if ((device.address != selectedPrinter.address) || (device.typePrinter == PrinterType.usb && selectedPrinter.vendorId != device.vendorId)) {
-        await PrinterManager.instance.disconnect(type: selectedPrinter.typePrinter);
+      if ((device.address != selectedPrinter.address) ||
+          (device.typePrinter == PrinterType.usb &&
+              selectedPrinter.vendorId != device.vendorId)) {
+        await PrinterManager.instance
+            .disconnect(type: selectedPrinter.typePrinter);
       }
     }
 
@@ -128,14 +141,13 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
     setState(() {});
   }
 
-
   Future _printReceiveTest() async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm80, profile);
     List<int> bytes = [];
 
     bytes += generator.text('${widget.configModel.businessInfo.shopName}',
-        styles: const PosStyles(align: PosAlign.center,bold: true));
+        styles: const PosStyles(align: PosAlign.center, bold: true));
     bytes += generator.text('${widget.configModel.businessInfo.shopAddress}',
         styles: const PosStyles(align: PosAlign.center));
     bytes += generator.text('${widget.configModel.businessInfo.shopPhone}',
@@ -144,8 +156,11 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         styles: const PosStyles(align: PosAlign.center));
     bytes += generator.text('${widget.configModel.businessInfo.vat}',
         styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text('...............................................................', styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text(' ', styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+        '...............................................................',
+        styles: const PosStyles(align: PosAlign.center));
+    bytes +=
+        generator.text(' ', styles: const PosStyles(align: PosAlign.center));
 
     bytes += generator.row([
       PosColumn(
@@ -153,7 +168,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 6,
         styles: PosStyles(align: PosAlign.left, underline: true),
       ),
-
       PosColumn(
         text: 'payment_method'.tr,
         width: 6,
@@ -162,11 +176,11 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
     ]);
     bytes += generator.row([
       PosColumn(
-        text: '${DateConverter.dateTimeStringToMonthAndTime(widget.invoice.createdAt)}',
+        text:
+            '${DateConverter.dateTimeStringToMonthAndTime(widget.invoice.createdAt)}',
         width: 6,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: 'Cash',
         width: 6,
@@ -180,7 +194,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 2,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: 'product_info'.tr,
         width: 6,
@@ -198,18 +211,20 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
       ),
     ]);
 
-    bytes += generator.text('...............................................................', styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+        '...............................................................',
+        styles: const PosStyles(align: PosAlign.center));
 
-    for(int i =0; i< widget.invoice.details.length; i++){
+    for (int i = 0; i < widget.invoice.details.length; i++) {
       bytes += generator.row([
         PosColumn(
-          text: '${i+1}',
+          text: '${i + 1}',
           width: 1,
           styles: PosStyles(align: PosAlign.left),
         ),
-
         PosColumn(
-          text: '${jsonDecode(widget.invoice.details[i].productDetails)['name']}',
+          text:
+              '${jsonDecode(widget.invoice.details[i].productDetails)['name']}',
           width: 7,
           styles: PosStyles(align: PosAlign.left),
         ),
@@ -226,21 +241,24 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
       ]);
     }
 
-
-
-    bytes += generator.text('...............................................................', styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+        '...............................................................',
+        styles: const PosStyles(align: PosAlign.center));
 
     bytes += generator.row([
       PosColumn(
         text: 'subtotal'.tr,
         width: 6,
-        styles: PosStyles(align: PosAlign.left,),
+        styles: PosStyles(
+          align: PosAlign.left,
+        ),
       ),
-
       PosColumn(
         text: '${widget.invoice.orderAmount}',
         width: 6,
-        styles: PosStyles(align: PosAlign.right,),
+        styles: PosStyles(
+          align: PosAlign.right,
+        ),
       ),
     ]);
     bytes += generator.row([
@@ -249,7 +267,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 6,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: '${widget.discountProduct}',
         width: 6,
@@ -263,7 +280,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 6,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: '${widget.invoice.couponDiscountAmount}',
         width: 6,
@@ -276,7 +292,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 6,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: '${widget.invoice.extraDiscount}',
         width: 6,
@@ -289,7 +304,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 6,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: '${widget.invoice.totalTax}',
         width: 6,
@@ -297,7 +311,9 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
       ),
     ]);
 
-    bytes += generator.text('...............................................................', styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+        '...............................................................',
+        styles: const PosStyles(align: PosAlign.center));
 
     bytes += generator.row([
       PosColumn(
@@ -305,7 +321,6 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         width: 6,
         styles: PosStyles(align: PosAlign.left),
       ),
-
       PosColumn(
         text: '${widget.total - widget.discountProduct}',
         width: 6,
@@ -313,18 +328,30 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
       ),
     ]);
 
-
-
-
-    bytes += generator.text(' ', styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text('...............................................................', styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text('terms_and_condition'.tr, styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text(' ',);
-    bytes += generator.text('terms_and_condition_details'.tr, styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text(' ',);
-    bytes += generator.text('${'powered_by'.tr} : ${widget.configModel.businessInfo.shopName}', styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text('${'shop_online'.tr} : ${widget.configModel.businessInfo.shopName}', styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text(' ',);
+    bytes +=
+        generator.text(' ', styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+        '...............................................................',
+        styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text('terms_and_condition'.tr,
+        styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+      ' ',
+    );
+    bytes += generator.text('terms_and_condition_details'.tr,
+        styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+      ' ',
+    );
+    bytes += generator.text(
+        '${'powered_by'.tr} : ${widget.configModel.businessInfo.shopName}',
+        styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+        '${'shop_online'.tr} : ${widget.configModel.businessInfo.shopName}',
+        styles: const PosStyles(align: PosAlign.center));
+    bytes += generator.text(
+      ' ',
+    );
 
     _printEscPos(bytes, generator);
   }
@@ -340,21 +367,28 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
         bytes += generator.cut();
         await printerManager.connect(
             type: bluetoothPrinter.typePrinter,
-            model: UsbPrinterInput(name: bluetoothPrinter.deviceName, productId: bluetoothPrinter.productId, vendorId: bluetoothPrinter.vendorId));
+            model: UsbPrinterInput(
+                name: bluetoothPrinter.deviceName,
+                productId: bluetoothPrinter.productId,
+                vendorId: bluetoothPrinter.vendorId));
         break;
       case PrinterType.bluetooth:
         bytes += generator.cut();
         await printerManager.connect(
             type: bluetoothPrinter.typePrinter,
-            model:
-            BluetoothPrinterInput(name: bluetoothPrinter.deviceName, address: bluetoothPrinter.address, isBle: bluetoothPrinter.isBle ?? false));
+            model: BluetoothPrinterInput(
+                name: bluetoothPrinter.deviceName,
+                address: bluetoothPrinter.address,
+                isBle: bluetoothPrinter.isBle ?? false));
         pendingTask = null;
         if (Platform.isIOS || Platform.isAndroid) pendingTask = bytes;
         break;
       case PrinterType.network:
         bytes += generator.feed(2);
         bytes += generator.cut();
-        await printerManager.connect(type: bluetoothPrinter.typePrinter, model: TcpPrinterInput(ipAddress: bluetoothPrinter.address));
+        await printerManager.connect(
+            type: bluetoothPrinter.typePrinter,
+            model: TcpPrinterInput(ipAddress: bluetoothPrinter.address));
         break;
       default:
     }
@@ -382,41 +416,62 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
             child: Column(
               children: [
                 Column(
-                    children: devices.map((device) => ListTile(
-                      title: Text('${device.deviceName}'),
-                      subtitle: Platform.isAndroid && defaultPrinterType == PrinterType.usb
-                          ? null
-                          : Visibility(visible: !Platform.isWindows, child: Text("${device.address}")),
-                      onTap: () {selectDevice(device);},
-                      leading: selectedPrinter != null &&
-                          ((device.typePrinter == PrinterType.usb && Platform.isWindows
-                              ? device.deviceName == selectedPrinter.deviceName
-                              : device.vendorId != null && selectedPrinter.vendorId == device.vendorId) ||
-                              (device.address != null && selectedPrinter.address == device.address))
-                          ? const Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ) : null,
-                      trailing: OutlinedButton(
-                        onPressed: selectedPrinter == null || device.deviceName != selectedPrinter?.deviceName
-                            ? null : () async {
-                          _printReceiveTest();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
-                          child: Text("print_invoice".tr, textAlign: TextAlign.center),
-                        ),
-                      ),
-                    ),
-                    )
+                    children: devices
+                        .map(
+                          (device) => ListTile(
+                            title: Text('${device.deviceName}'),
+                            subtitle: Platform.isAndroid &&
+                                    defaultPrinterType == PrinterType.usb
+                                ? null
+                                : Visibility(
+                                    visible: !Platform.isWindows,
+                                    child: Text("${device.address}")),
+                            onTap: () {
+                              selectDevice(device);
+                            },
+                            leading: selectedPrinter != null &&
+                                    ((device.typePrinter == PrinterType.usb &&
+                                                Platform.isWindows
+                                            ? device.deviceName ==
+                                                selectedPrinter.deviceName
+                                            : device.vendorId != null &&
+                                                selectedPrinter.vendorId ==
+                                                    device.vendorId) ||
+                                        (device.address != null &&
+                                            selectedPrinter.address ==
+                                                device.address))
+                                ? const Icon(
+                                    Icons.check,
+                                    color: Colors.green,
+                                  )
+                                : null,
+                            trailing: OutlinedButton(
+                              onPressed: selectedPrinter == null ||
+                                      device.deviceName !=
+                                          selectedPrinter?.deviceName
+                                  ? null
+                                  : () async {
+                                      _printReceiveTest();
+                                    },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 20),
+                                child: Text("print_invoice".tr,
+                                    textAlign: TextAlign.center),
+                              ),
+                            ),
+                          ),
+                        )
                         .toList()),
                 Visibility(
-                  visible: defaultPrinterType == PrinterType.network && Platform.isWindows,
+                  visible: defaultPrinterType == PrinterType.network &&
+                      Platform.isWindows,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: TextFormField(
                       controller: _ipController,
-                      keyboardType: const TextInputType.numberWithOptions(signed: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(signed: true),
                       decoration: const InputDecoration(
                         label: Text("Ip Address"),
                         prefixIcon: Icon(Icons.wifi, size: 24),
@@ -426,12 +481,14 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
                   ),
                 ),
                 Visibility(
-                  visible: defaultPrinterType == PrinterType.network && Platform.isWindows,
+                  visible: defaultPrinterType == PrinterType.network &&
+                      Platform.isWindows,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: TextFormField(
                       controller: _portController,
-                      keyboardType: const TextInputType.numberWithOptions(signed: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(signed: true),
                       decoration: const InputDecoration(
                         label: Text("Port"),
                         prefixIcon: Icon(Icons.numbers_outlined, size: 24),
@@ -441,17 +498,21 @@ class _InVoicePrintScreenState extends State<InVoicePrintScreen> {
                   ),
                 ),
                 Visibility(
-                  visible: defaultPrinterType == PrinterType.network && Platform.isWindows,
+                  visible: defaultPrinterType == PrinterType.network &&
+                      Platform.isWindows,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: OutlinedButton(
                       onPressed: () async {
-                        if (_ipController.text.isNotEmpty) setIpAddress(_ipController.text);
+                        if (_ipController.text.isNotEmpty)
+                          setIpAddress(_ipController.text);
                         _printReceiveTest();
                       },
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 50),
-                        child: Text("print_invoice".tr, textAlign: TextAlign.center),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 50),
+                        child: Text("print_invoice".tr,
+                            textAlign: TextAlign.center),
                       ),
                     ),
                   ),
@@ -479,11 +540,11 @@ class BluetoothPrinter {
 
   BluetoothPrinter(
       {this.deviceName,
-        this.address,
-        this.port,
-        this.state,
-        this.vendorId,
-        this.productId,
-        this.typePrinter = PrinterType.bluetooth,
-        this.isBle = false});
+      this.address,
+      this.port,
+      this.state,
+      this.vendorId,
+      this.productId,
+      this.typePrinter = PrinterType.bluetooth,
+      this.isBle = false});
 }

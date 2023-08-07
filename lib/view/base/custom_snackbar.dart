@@ -1,9 +1,9 @@
-import 'package:six_pos/util/dimensions.dart';
+import 'package:grow_up/util/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void showCustomSnackBar(String message, {bool isError = true}) {
-  if(message != null && message.isNotEmpty) {
+  if (message != null && message.isNotEmpty) {
     Get.showSnackbar(GetSnackBar(
       backgroundColor: isError ? Colors.red : Colors.green,
       message: message,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:six_pos/util/dimensions.dart';
-import 'package:six_pos/util/styles.dart';
+import 'package:grow_up/util/dimensions.dart';
+import 'package:grow_up/util/styles.dart';
 
 class CustomDropDownButton extends StatefulWidget {
   final String value;
@@ -8,9 +8,9 @@ class CustomDropDownButton extends StatefulWidget {
   final Function onChanged;
   const CustomDropDownButton({
     Key key,
-  @required this.value,
-   @required this.itemList,
-   @required this.onChanged,
+    @required this.value,
+    @required this.itemList,
+    @required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -21,11 +21,13 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_DEFAULT),
+      padding:
+          EdgeInsets.symmetric(horizontal: Dimensions.PADDING_SIZE_DEFAULT),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(Dimensions.RADIUS_SMALL),
-        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.3)),
+        border:
+            Border.all(color: Theme.of(context).primaryColor.withOpacity(0.3)),
       ),
       child: DropdownButton<String>(
         value: widget.value,
@@ -34,8 +36,13 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
         underline: SizedBox(),
         onChanged: widget.onChanged,
         items: widget.itemList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(value: value, child: Text(value,
-            style: fontSizeRegular.copyWith(fontSize: Dimensions.fontSizeSmall),));
+          return DropdownMenuItem<String>(
+              value: value,
+              child: Text(
+                value,
+                style: fontSizeRegular.copyWith(
+                    fontSize: Dimensions.fontSizeSmall),
+              ));
         }).toList(),
         isExpanded: true,
       ),

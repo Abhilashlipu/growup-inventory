@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:six_pos/data/api/api_checker.dart';
-import 'package:six_pos/data/model/response/expenseModel.dart';
-import 'package:six_pos/data/repository/expense_repo.dart';
-import 'package:six_pos/view/base/custom_snackbar.dart';
+import 'package:grow_up/data/api/api_checker.dart';
+import 'package:grow_up/data/model/response/expenseModel.dart';
+import 'package:grow_up/data/repository/expense_repo.dart';
+import 'package:grow_up/view/base/custom_snackbar.dart';
 
-class ExpenseController extends GetxController implements GetxService{
+class ExpenseController extends GetxController implements GetxService {
   final ExpenseRepo expenseRepo;
   ExpenseController({@required this.expenseRepo});
   bool _isLoading = false;
@@ -16,22 +16,22 @@ class ExpenseController extends GetxController implements GetxService{
   int _expenseListLength;
   int get expenseListLength => _expenseListLength;
   List<Expenses> _expenseList = [];
-  List<Expenses> get expenseList =>_expenseList;
+  List<Expenses> get expenseList => _expenseList;
   int _accountTypeIndex = 0;
   int get accountTypeIndex => _accountTypeIndex;
 
-  Future<void> getExpenseList( int offset, {bool reload = false}) async {
-    if(reload){
+  Future<void> getExpenseList(int offset, {bool reload = false}) async {
+    if (reload) {
       _expenseList = [];
     }
     _isLoading = true;
     Response response = await expenseRepo.getExpenseList(offset);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _expenseList.addAll(ExpenseModel.fromJson(response.body).expenses);
       _expenseListLength = ExpenseModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       _isLoading = false;
       ApiChecker.checkApi(response);
     }
@@ -43,13 +43,13 @@ class ExpenseController extends GetxController implements GetxService{
     _expenseList = [];
     _isLoading = true;
     Response response = await expenseRepo.getExpenseFilter(startDate, endDate);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       _expenseList = [];
       _expenseList.addAll(ExpenseModel.fromJson(response.body).expenses);
       _expenseListLength = ExpenseModel.fromJson(response.body).total;
       _isLoading = false;
       _isFirst = false;
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
@@ -58,35 +58,37 @@ class ExpenseController extends GetxController implements GetxService{
   Future<void> deleteExpense(int expenseId) async {
     _isLoading = true;
     Response response = await expenseRepo.deleteExpense(expenseId);
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       getExpenseList(1, reload: true);
       _isLoading = false;
       Get.back();
       showCustomSnackBar('expense_deleted_successfully'.tr, isError: false);
-    }else {
+    } else {
       ApiChecker.checkApi(response);
     }
     update();
   }
 
-  Future<void> addExpense(Expenses expense , bool isUpdate) async {
+  Future<void> addExpense(Expenses expense, bool isUpdate) async {
     _isLoading = true;
-    Response response = await expenseRepo.addNewExpense(expense, isUpdate: isUpdate);
-    if(response.statusCode == 200) {
+    Response response =
+        await expenseRepo.addNewExpense(expense, isUpdate: isUpdate);
+    if (response.statusCode == 200) {
       getExpenseList(1, reload: true);
       Get.back();
-      showCustomSnackBar(isUpdate? 'expense_updated_successfully'.tr : 'expense_created_successfully'.tr, isError: false);
+      showCustomSnackBar(
+          isUpdate
+              ? 'expense_updated_successfully'.tr
+              : 'expense_created_successfully'.tr,
+          isError: false);
       _isLoading = false;
-    }else {
+    } else {
       _isLoading = false;
       ApiChecker.checkApi(response);
     }
     _isLoading = false;
     update();
   }
-
-
-
 
   void showBottomLoader() {
     _isLoading = true;
@@ -101,10 +103,11 @@ class ExpenseController extends GetxController implements GetxService{
   void setAccountTypeIndex(int index, bool notify) {
     _accountTypeIndex = index;
     print('===accountType==$_accountTypeIndex');
-    if(notify) {
+    if (notify) {
       update();
     }
   }
+
   DateTime _startDate;
   DateTime _endDate;
   DateFormat _dateFormat = DateFormat('yyyy-MM-d');
@@ -112,25 +115,22 @@ class ExpenseController extends GetxController implements GetxService{
   DateTime get endDate => _endDate;
   DateFormat get dateFormat => _dateFormat;
 
-  void selectDate(String type, BuildContext context){
+  void selectDate(String type, BuildContext context) {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2022),
       lastDate: DateTime(2030),
     ).then((date) {
-      if (type == 'start'){
+      if (type == 'start') {
         _startDate = date;
-      }else{
+      } else {
         _endDate = date;
       }
-      if(date == null){
+      if (date == null) {
         print('Null');
       }
       update();
     });
   }
-
-
-
 }
